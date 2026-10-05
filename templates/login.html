@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="color-scheme" content="dark">
+  <title>Sign in | DZ Control</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="login-body">
+  <main class="login-shell">
+    <section class="login-visual">
+      <div class="login-visual-inner">
+        <div class="login-wordmark"><span class="brand-mark brand-mark-xl">DZ</span><span><strong>DZ CONTROL</strong><small>REMOTE OPERATIONS CONSOLE</small></span></div>
+        <div class="login-statement">
+          <span class="eyebrow">SECURE LOCAL ADMINISTRATION</span>
+          <h1>One console.<br>Full system control.</h1>
+          <p>Monitor system telemetry, operate the remote desktop, run diagnostics and manage privileged actions from a focused administration workspace.</p>
+        </div>
+      </div>
+    </section>
+    <section class="login-panel">
+      <div class="login-form-wrap">
+        <div class="login-heading"><span class="eyebrow">ADMINISTRATOR ACCESS</span><h2>Welcome back</h2><p>Enter your administrator credentials to continue to DZ Control.</p></div>
+        {% if error %}<div class="alert danger" id="loginError"><strong>Access denied</strong><span>{{ error }}</span></div>{% endif %}
+        <form method="post" class="login-form" autocomplete="on">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <label><span>Username</span><input type="text" name="username" required autofocus autocomplete="username" maxlength="128" value="admin" placeholder="admin"></label>
+          <label><span>Password</span><input type="password" name="password" required autocomplete="current-password" maxlength="512" placeholder="Enter your password"></label>
+          <button class="btn btn-primary btn-block btn-xl" type="submit"><span>Sign in securely</span><span>→</span></button>
+        </form>
+        <div class="login-footnote"><span class="status-dot"></span><span>Protected by request throttling and progressive account lockout.</span></div>
+      </div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+</body>
+</html>
