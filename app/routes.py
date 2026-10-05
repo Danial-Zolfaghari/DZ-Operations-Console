@@ -254,7 +254,8 @@ def settings_update():
 @api_bp.get("/control/probe")
 @api_login_required
 def control_probe():
-    return jsonify(input_control.probe())
+    result = input_control.probe()
+    return jsonify(result)
 
 
 def _control_rate(kind: str, limit: int, window_seconds: int = 1) -> bool:

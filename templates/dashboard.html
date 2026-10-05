@@ -6,19 +6,41 @@
   <div class="page-heading"><span class="eyebrow">01 / SYSTEM OVERVIEW</span><h1>Dashboard</h1><p>Live system telemetry, resource utilization and host power operations.</p></div>
   <div class="host-identity"><span>ACTIVE HOST</span><div><strong id="hostname">Loading…</strong><small id="hostOs">Detecting operating system</small></div><i class="status-dot"></i></div>
 </section>
+
 <section class="metric-grid">
-  <article class="metric-card metric-primary"><div class="metric-head"><span>CPU utilization</span><small>LIVE</small></div><div class="metric-number"><strong id="cpuValue">0.0%</strong><span id="cpuFreq">— MHz</span></div><div class="meter"><i id="cpuBar"></i></div><div class="metric-meta"><span id="cpuPhysical">Physical: —</span><span id="cpuLogical">Logical: —</span></div></article>
-  <article class="metric-card"><div class="metric-head"><span>Memory utilization</span><small>RAM</small></div><div class="metric-number"><strong id="memoryValue">0.0%</strong><span id="memoryMeta">—</span></div><div class="meter"><i id="memoryBar"></i></div></article>
-  <article class="metric-card"><div class="metric-head"><span>System disk</span><small>STORAGE</small></div><div class="metric-number"><strong id="diskValue">0.0%</strong><span id="diskMeta">—</span></div><div class="meter"><i id="diskBar"></i></div></article>
-  <article class="metric-card"><div class="metric-head"><span>Network throughput</span><small>REAL TIME</small></div><div class="network-pair"><div><small>DOWNLOAD</small><strong id="downValue">0.00</strong><span>Mbps</span></div><div><small>UPLOAD</small><strong id="upValue">0.00</strong><span>Mbps</span></div></div></article>
+  <article class="metric-card metric-primary">
+    <div class="metric-head"><span>CPU utilization</span><small>LIVE</small></div>
+    <div class="metric-number"><strong id="cpuValue">0.0%</strong><span id="cpuFreq">— MHz</span></div>
+    <div class="meter"><i id="cpuBar"></i></div>
+    <div class="metric-meta"><span id="cpuPhysical">Physical: —</span><span id="cpuLogical">Logical: —</span></div>
+  </article>
+  <article class="metric-card">
+    <div class="metric-head"><span>Memory utilization</span><small>RAM</small></div>
+    <div class="metric-number"><strong id="memoryValue">0.0%</strong><span id="memoryMeta">—</span></div>
+    <div class="meter"><i id="memoryBar"></i></div>
+    <div class="metric-meta"><span>Used / Total memory</span></div>
+  </article>
+  <article class="metric-card">
+    <div class="metric-head"><span>System disk</span><small>STORAGE</small></div>
+    <div class="metric-number"><strong id="diskValue">0.0%</strong><span id="diskMeta">—</span></div>
+    <div class="meter"><i id="diskBar"></i></div>
+    <div class="metric-meta"><span>Used / Total storage</span></div>
+  </article>
+  <article class="metric-card">
+    <div class="metric-head"><span>Network throughput</span><small>REAL TIME</small></div>
+    <div class="network-pair"><div><small>DOWNLOAD</small><strong id="downValue">0.00</strong><span>Mbps</span></div><div><small>UPLOAD</small><strong id="upValue">0.00</strong><span>Mbps</span></div></div>
+    <div class="metric-meta"><span>Current aggregate throughput</span></div>
+  </article>
 </section>
+
 <section class="panel processor-panel">
-  <div class="panel-head"><div><span class="eyebrow">PROCESSOR TELEMETRY</span><h2>Logical processor utilization</h2></div><span class="data-chip" id="cpuCoreCount">— processors</span></div>
+  <div class="panel-head"><div><span class="eyebrow">PROCESSOR TELEMETRY</span><h2>Logical processor utilization</h2><p>Per-thread activity sampled directly from the host.</p></div><span class="data-chip" id="cpuCoreCount">— processors</span></div>
   <div class="core-grid" id="coreGrid"><div class="empty-state">Loading processor telemetry…</div></div>
 </section>
+
 <section class="split-grid">
   <article class="panel">
-    <div class="panel-head"><div><span class="eyebrow">POWER MANAGEMENT</span><h2>Schedule host operation</h2></div><span class="data-chip">WINDOWS</span></div>
+    <div class="panel-head"><div><span class="eyebrow">POWER MANAGEMENT</span><h2>Schedule host operation</h2><p>Queue a local Windows power action using a countdown or exact time.</p></div><span class="data-chip">WINDOWS</span></div>
     <div class="segmented" id="scheduleTabs"><button class="active" data-mode="countdown">Countdown</button><button data-mode="scheduled">Specific time</button></div>
     <div id="countdownFields" class="time-grid"><label><span>Hours</span><input id="hours" type="number" min="0" max="168" value="0"></label><label><span>Minutes</span><input id="minutes" type="number" min="0" max="59" value="10"></label><label><span>Seconds</span><input id="seconds" type="number" min="0" max="59" value="0"></label></div>
     <div id="scheduledFields" class="hidden"><label><span>Execution time</span><input id="scheduledTime" type="time"></label></div>
@@ -29,7 +51,11 @@
       <button class="power-action success" data-action="lock"><span>04</span><div><b>Lock</b><small>Lock the Windows session</small></div></button>
     </div>
   </article>
-  <article class="panel"><div class="panel-head"><div><span class="eyebrow">TASK QUEUE</span><h2>Scheduled operations</h2></div><button class="btn btn-secondary" id="refreshTasks">Refresh</button></div><div class="task-list" id="taskList"><div class="empty-state">No active operations.</div></div></article>
+
+  <article class="panel">
+    <div class="panel-head"><div><span class="eyebrow">TASK QUEUE</span><h2>Scheduled operations</h2><p>Pending power operations for this host.</p></div><button class="btn btn-secondary" id="refreshTasks">Refresh</button></div>
+    <div class="task-list" id="taskList"><div class="empty-state">No active operations.</div></div>
+  </article>
 </section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

@@ -82,6 +82,7 @@ class DiagnosticsService:
             argv = ["powershell.exe", "-NoLogo", "-NoProfile", "-NonInteractive", "-Command", command]
             creationflags = subprocess.CREATE_NO_WINDOW
         else:
+            # Development fallback for static/testing environments.
             argv = ["sh", "-lc", command]
             creationflags = 0
         proc = subprocess.run(

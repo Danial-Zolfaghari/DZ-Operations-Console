@@ -3,13 +3,52 @@
 {% block page_title %}Command Center{% endblock %}
 {% block content %}
 <section class="page-header command-page-header">
-  <div class="page-heading"><span class="eyebrow">03 / DIAGNOSTICS</span><h1>Command Center</h1><p>Run curated diagnostics or use the optional custom PowerShell console when explicitly enabled.</p></div>
+  <div class="page-heading"><span class="eyebrow">03 / DIAGNOSTICS</span><h1>Command Center</h1><p>Run curated diagnostics or execute an unrestricted PowerShell command when privileged shell access is enabled.</p></div>
   <div class="access-state {% if catalog.shell_enabled %}enabled{% else %}disabled{% endif %}"><span></span><div><small>CUSTOM POWERSHELL</small><strong>{{ 'ENABLED' if catalog.shell_enabled else 'DISABLED' }}</strong></div></div>
 </section>
+
 <section class="command-workspace">
-  <aside class="command-sidebar panel-flat"><div class="command-sidebar-head"><span class="eyebrow">COMMAND LIBRARY</span><h2>Categories</h2></div><div class="category-list" id="categoryList">{% for category in catalog.categories %}<button class="category-btn {% if loop.first %}active{% endif %}" data-category="{{ category.id }}"><span class="category-index">0{{ loop.index }}</span><div><b>{{ category.title }}</b><small>{{ category.description }}</small></div></button>{% endfor %}</div></aside>
-  <section class="command-library panel-flat"><div class="command-library-head"><div><span class="eyebrow">AVAILABLE COMMANDS</span><h2>Commands</h2></div><span class="data-chip" id="commandCount">—</span></div><div class="helper-list" id="helperList">{% for cmd in catalog.commands %}<button class="helper-command {% if cmd.category != catalog.categories[0].id %}hidden{% endif %}" data-category="{{ cmd.category }}" data-command-id="{{ cmd.id }}" data-command-text="{{ cmd.command|e }}"><div class="helper-main"><b>{{ cmd.title }}</b><small>{{ cmd.description }}</small></div><code>{{ cmd.command }}</code><span class="run-mark">RUN</span></button>{% endfor %}</div></section>
-  <section class="terminal-panel"><div class="terminal-toolbar"><div class="terminal-heading"><strong id="terminalTitle">PowerShell</strong><small>Administrator command session</small></div><button class="terminal-clear" id="clearTerminal">Clear output</button></div><pre id="terminalOutput">DZ CONTROL / COMMAND CENTER</pre><form class="shell-input-row {% if not catalog.shell_enabled %}shell-disabled{% endif %}" id="shellForm"><span class="prompt">PS C:&gt;</span><input id="customCommand" type="text" autocomplete="off" {% if not catalog.shell_enabled %}disabled{% endif %}><button class="btn btn-primary" type="submit" {% if not catalog.shell_enabled %}disabled{% endif %}>Run</button></form></section>
+  <aside class="command-sidebar panel-flat">
+    <div class="command-sidebar-head"><span class="eyebrow">COMMAND LIBRARY</span><h2>Categories</h2><p>Select a diagnostic domain.</p></div>
+    <div class="category-list" id="categoryList">
+      {% for category in catalog.categories %}
+      <button class="category-btn {% if loop.first %}active{% endif %}" data-category="{{ category.id }}">
+        <span class="category-index">0{{ loop.index }}</span>
+        <div><b>{{ category.title }}</b><small>{{ category.description }}</small></div>
+        <span class="category-arrow">›</span>
+      </button>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <section class="command-library panel-flat">
+    <div class="command-library-head"><div><span class="eyebrow">AVAILABLE COMMANDS</span><h2>Commands</h2><p>Ready-to-run administrative diagnostics.</p></div><span class="data-chip" id="commandCount">—</span></div>
+    <div class="helper-list" id="helperList">
+      {% for cmd in catalog.commands %}
+      <button class="helper-command {% if cmd.category != catalog.categories[0].id %}hidden{% endif %}" data-category="{{ cmd.category }}" data-command-id="{{ cmd.id }}" data-command-text="{{ cmd.command|e }}">
+        <div class="helper-main"><b>{{ cmd.title }}</b><small>{{ cmd.description }}</small></div>
+        <code>{{ cmd.command }}</code><span class="run-mark">RUN</span>
+      </button>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="terminal-panel">
+    <div class="terminal-toolbar">
+      <div class="terminal-window-controls"><i></i><i></i><i></i></div>
+      <div class="terminal-heading"><strong id="terminalTitle">PowerShell</strong><small>Administrator command session</small></div>
+      <button class="terminal-clear" id="clearTerminal">Clear output</button>
+    </div>
+    <pre id="terminalOutput">DZ CONTROL / COMMAND CENTER
+
+Select a helper command from the library or enter a custom command below.</pre>
+    <form class="shell-input-row {% if not catalog.shell_enabled %}shell-disabled{% endif %}" id="shellForm">
+      <span class="prompt">PS C:\&gt;</span>
+      <input id="customCommand" type="text" autocomplete="off" placeholder="{% if catalog.shell_enabled %}Enter PowerShell command...{% else %}Custom PowerShell is disabled in Settings{% endif %}" {% if not catalog.shell_enabled %}disabled{% endif %}>
+      <button class="btn btn-primary" type="submit" {% if not catalog.shell_enabled %}disabled{% endif %}>Run</button>
+    </form>
+    {% if not catalog.shell_enabled %}<p class="inline-note">Enable Custom PowerShell in Settings and restart the application to execute arbitrary commands.</p>{% endif %}
+  </section>
 </section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/diagnostics.js') }}"></script>{% endblock %}

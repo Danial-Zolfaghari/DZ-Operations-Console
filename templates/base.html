@@ -15,29 +15,62 @@
       <div class="brand-block">
         <a class="brand" href="{{ url_for('main.dashboard') }}" aria-label="DZ Control dashboard">
           <span class="brand-mark">DZ</span>
-          <span class="brand-copy"><strong>DZ Control</strong><small>Remote Operations Console</small></span>
+          <span class="brand-copy">
+            <strong>DZ Control</strong>
+            <small>Remote Operations Console</small>
+          </span>
         </a>
       </div>
+
       <nav class="nav" aria-label="Primary navigation">
         <span class="nav-section">OPERATIONS</span>
-        <a class="nav-link {% if page=='dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}"><span><b>Dashboard</b><small>System overview</small></span></a>
-        <a class="nav-link {% if page=='screen' %}active{% endif %}" href="{{ url_for('main.screen') }}"><span><b>Remote Screen</b><small>Desktop control</small></span></a>
-        <a class="nav-link {% if page=='diagnostics' %}active{% endif %}" href="{{ url_for('main.diagnostics_page') }}"><span><b>Command Center</b><small>Diagnostics & shell</small></span></a>
+        <a class="nav-link {% if page=='dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          <span><b>Dashboard</b><small>System overview</small></span>
+        </a>
+        <a class="nav-link {% if page=='screen' %}active{% endif %}" href="{{ url_for('main.screen') }}">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+          <span><b>Remote Screen</b><small>Desktop control</small></span>
+        </a>
+        <a class="nav-link {% if page=='diagnostics' %}active{% endif %}" href="{{ url_for('main.diagnostics_page') }}">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 8-4 4 4 4M17 8l4 4-4 4M14 4l-4 16"/></svg></span>
+          <span><b>Command Center</b><small>Diagnostics & shell</small></span>
+        </a>
+
         <span class="nav-section nav-section-spaced">SYSTEM</span>
-        <a class="nav-link {% if page=='settings' %}active{% endif %}" href="{{ url_for('main.settings_page') }}"><span><b>Settings</b><small>Security & access</small></span></a>
+        <a class="nav-link {% if page=='settings' %}active{% endif %}" href="{{ url_for('main.settings_page') }}">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3V9.6h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.15.36.36.7.6 1 .3.3.69.46 1.1.5h.1v4h-.1c-.41.04-.8.2-1.1.5-.24.3-.45.64-.6 1Z"/></svg></span>
+          <span><b>Settings</b><small>Security & access</small></span>
+        </a>
       </nav>
+
       <div class="sidebar-foot">
-        <div class="security-status"><span class="status-dot"></span><div><strong>Secure session</strong><small>CSRF · Same-origin · Lockout</small></div></div>
+        <div class="security-status">
+          <span class="status-dot"></span>
+          <div><strong>Secure session</strong><small>CSRF · Same-origin · Lockout</small></div>
+        </div>
         <form action="{{ url_for('auth.logout') }}" method="post">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button class="btn btn-secondary btn-block sidebar-signout" type="submit">Sign out</button>
+          <button class="btn btn-secondary btn-block sidebar-signout" type="submit" title="Sign out">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M14 4h4a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-4"/></svg>
+            <span class="signout-label">Sign out</span>
+          </button>
         </form>
       </div>
     </aside>
+
     <main class="main">
       <header class="topbar">
-        <div class="topbar-left"><button class="icon-btn sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse navigation">☰</button><div class="breadcrumbs"><span>DZ CONTROL</span><b>/</b><strong>{% block page_title %}Console{% endblock %}</strong></div></div>
-        <div class="topbar-actions"><span class="connection-pill"><span class="status-dot"></span><span>System online</span></span><span class="clock" id="clock">--:--:--</span></div>
+        <div class="topbar-left">
+          <button class="icon-btn sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse navigation" aria-expanded="true" title="Collapse navigation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+          </button>
+          <div class="breadcrumbs"><span>DZ CONTROL</span><b>/</b><strong>{% block page_title %}Console{% endblock %}</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <span class="connection-pill"><span class="status-dot"></span><span>System online</span></span>
+          <span class="clock" id="clock">--:--:--</span>
+        </div>
       </header>
       <div class="workspace">{% block content %}{% endblock %}</div>
     </main>

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import threading
 import time
+
 import cv2
 import mss
 import numpy as np
@@ -10,6 +12,7 @@ class ScreenStreamer:
     def __init__(self, fps: int = 8, scale: float = 0.65) -> None:
         self.fps = fps
         self.scale = scale
+        self._lock = threading.Lock()
 
     def frames(self):
         frame_delay = 1 / self.fps

@@ -1,9 +1,19 @@
 # Security Policy
 
-DZ_Shutdown exposes administrative capabilities and must be treated as privileged software.
+## Supported deployment model
 
-- Keep the default bind on loopback unless you have a trusted management network.
-- Set a strong administrator password hash and secret key.
-- Keep shell functionality disabled unless explicitly required.
-- Use HTTPS and secure cookies when traversing a network.
-- Never commit `.env`, production hashes, secrets, logs, screenshots, or host-specific data.
+DZ_Shutdown is designed to bind to `127.0.0.1` by default. Remote exposure should only be performed through an explicitly secured deployment with authentication, TLS and network access controls.
+
+## Security defaults
+
+- Login required for dashboard/control routes
+- Passwords stored as hashes, not plaintext
+- CSRF protection for state-changing requests
+- HTTP-only, SameSite=Strict sessions
+- Login throttling and progressive lockout
+- Custom shell disabled by default
+- CSP, X-Frame-Options, no-sniff and other response headers
+
+## Reporting a vulnerability
+
+Do not include passwords, session cookies, real host details, private IP architecture, or sensitive screenshots in public issues.

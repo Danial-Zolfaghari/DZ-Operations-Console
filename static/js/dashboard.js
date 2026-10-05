@@ -1,8 +1,129 @@
-let scheduleMode='countdown';const $=id=>document.getElementById(id);
-function meter(id,v){const e=$(id);if(e)e.style.width=Math.max(0,Math.min(100,Number(v)||0))+'%';}
-function cores(values=[]){const root=$('coreGrid');if(!root)return;root.innerHTML='';values.forEach((v,i)=>{v=Math.max(0,Math.min(100,Number(v)||0));const row=document.createElement('div');row.className='core-item';row.innerHTML='<div><span>CPU '+String(i).padStart(2,'0')+'</span><strong>'+v.toFixed(1)+'%</strong></div><div class="core-meter"><i style="width:'+v+'%"></i></div>';root.appendChild(row);});}
-async function system(){try{const d=await apiFetch('/api/system');$('cpuValue').textContent=d.cpu.percent.toFixed(1)+'%';$('cpuPhysical').textContent='Physical: '+d.cpu.physical_cores;$('cpuLogical').textContent='Logical: '+d.cpu.logical_cores;$('cpuCoreCount').textContent=d.cpu.logical_cores+' logical processors';$('cpuFreq').textContent=d.cpu.frequency_mhz?Math.round(d.cpu.frequency_mhz)+' MHz':'—';meter('cpuBar',d.cpu.percent);cores(d.cpu.per_core);$('memoryValue').textContent=d.memory.percent.toFixed(1)+'%';$('memoryMeta').textContent=d.memory.used_gb+' / '+d.memory.total_gb+' GB';meter('memoryBar',d.memory.percent);$('diskValue').textContent=d.disk.percent.toFixed(1)+'%';$('diskMeta').textContent=d.disk.used_gb+' / '+d.disk.total_gb+' GB';meter('diskBar',d.disk.percent);$('downValue').textContent=d.network.download_mbps.toFixed(2);$('upValue').textContent=d.network.upload_mbps.toFixed(2);$('hostname').textContent=d.host.hostname;$('hostOs').textContent=d.host.os;}catch(e){console.error(e);}}
-async function tasks(){try{const d=await apiFetch('/api/power/tasks'),root=$('taskList');root.innerHTML='';const rows=d.tasks.filter(x=>!x.completed&&!x.cancelled);if(!rows.length){root.innerHTML='<div class="empty-state">No active operations.</div>';return;}for(const t of rows){const el=document.createElement('div');el.className='task';el.innerHTML='<div><b>'+t.action+'</b><small>'+new Date(t.execute_at*1000).toLocaleString()+'</small></div><button>Cancel</button>';el.querySelector('button').onclick=async()=>{await apiFetch('/api/power/tasks/'+t.id,{method:'DELETE'});tasks();};root.appendChild(el);}}catch(e){console.error(e);}}
-document.querySelectorAll('#scheduleTabs button').forEach(b=>b.onclick=()=>{scheduleMode=b.dataset.mode;document.querySelectorAll('#scheduleTabs button').forEach(x=>x.classList.toggle('active',x===b));$('countdownFields').classList.toggle('hidden',scheduleMode!=='countdown');$('scheduledFields').classList.toggle('hidden',scheduleMode!=='scheduled');});
-document.querySelectorAll('.power-action').forEach(b=>b.onclick=async()=>{const p={action:b.dataset.action,mode:scheduleMode};if(scheduleMode==='scheduled'){p.time=$('scheduledTime').value;if(!p.time)return toast('Enter a time.','error');}else{p.seconds=(+$('hours').value||0)*3600+(+$('minutes').value||0)*60+(+$('seconds').value||0);if(p.seconds<1)return toast('Countdown must be greater than zero.','error');}try{await apiFetch('/api/power/schedule',{method:'POST',body:JSON.stringify(p)});toast('Operation scheduled.','success');tasks();}catch(e){toast(e.message,'error');}});
-$('refreshTasks')?.addEventListener('click',tasks);system();tasks();setInterval(system,1600);setInterval(tasks,15000);
+let scheduleMode = 'countdown';
+const $ = id => document.getElementById(id);
+
+function setMeter(id, value) {
+  const el = $(id);
+  if (el) el.style.width = `${Math.max(0, Math.min(100, value))}%`;
+}
+
+function formatAction(action) {
+  return ({ shutdown: 'Shutdown', restart: 'Restart', sleep: 'Sleep', lock: 'Lock' })[action] || action;
+}
+
+function renderCores(values) {
+  const root = $('coreGrid');
+  if (!root) return;
+  root.innerHTML = '';
+  values.forEach((rawValue, index) => {
+    const numericValue = Number(rawValue);
+    const value = Number.isFinite(numericValue) ? Math.max(0, Math.min(100, numericValue)) : 0;
+    // Treat tiny rounded samples as idle so a reported 0.0% never renders a filled bar.
+    const visualValue = value < 0.05 ? 0 : value;
+    const item = document.createElement('div');
+    item.className = 'core-item';
+    item.innerHTML = `<div><span>CPU ${String(index).padStart(2, '0')}</span><strong>${value.toFixed(1)}%</strong></div><div class="core-meter${visualValue === 0 ? ' is-idle' : ''}"><i></i></div>`;
+    item.querySelector('.core-meter > i').style.width = `${visualValue}%`;
+    root.appendChild(item);
+  });
+}
+
+async function updateSystem() {
+  try {
+    const d = await apiFetch('/api/system');
+    $('cpuValue').textContent = `${d.cpu.percent.toFixed(1)}%`;
+    $('cpuPhysical').textContent = `Physical: ${d.cpu.physical_cores}`;
+    $('cpuLogical').textContent = `Logical: ${d.cpu.logical_cores}`;
+    $('cpuCoreCount').textContent = `${d.cpu.logical_cores} logical processors`;
+    $('cpuFreq').textContent = d.cpu.frequency_mhz ? `${Math.round(d.cpu.frequency_mhz)} MHz` : '—';
+    setMeter('cpuBar', d.cpu.percent);
+    renderCores(d.cpu.per_core || []);
+
+    $('memoryValue').textContent = `${d.memory.percent.toFixed(1)}%`;
+    $('memoryMeta').textContent = `${d.memory.used_gb} / ${d.memory.total_gb} GB`;
+    setMeter('memoryBar', d.memory.percent);
+
+    $('diskValue').textContent = `${d.disk.percent.toFixed(1)}%`;
+    $('diskMeta').textContent = `${d.disk.used_gb} / ${d.disk.total_gb} GB`;
+    setMeter('diskBar', d.disk.percent);
+
+    $('downValue').textContent = d.network.download_mbps.toFixed(2);
+    $('upValue').textContent = d.network.upload_mbps.toFixed(2);
+    $('hostname').textContent = d.host.hostname;
+    $('hostOs').textContent = d.host.os;
+  } catch (error) {
+    console.error('System telemetry update failed:', error);
+  }
+}
+
+async function loadTasks() {
+  try {
+    const { tasks } = await apiFetch('/api/power/tasks');
+    const root = $('taskList');
+    root.innerHTML = '';
+    const visible = tasks.filter(task => !task.completed && !task.cancelled);
+    if (!visible.length) {
+      root.innerHTML = '<div class="empty-state">No active operations.</div>';
+      return;
+    }
+
+    visible.forEach(task => {
+      const row = document.createElement('div');
+      row.className = 'task';
+      const when = new Date(task.execute_at * 1000).toLocaleString('en-GB');
+      row.innerHTML = `<div><b>${formatAction(task.action)}</b><small>${when}</small></div><button class="cancel-task">Cancel</button>`;
+      row.querySelector('button').addEventListener('click', async () => {
+        try {
+          await apiFetch(`/api/power/tasks/${task.id}`, { method: 'DELETE' });
+          toast('Operation cancelled.', 'success');
+          loadTasks();
+        } catch (error) {
+          toast(error.message, 'error');
+        }
+      });
+      root.appendChild(row);
+    });
+  } catch (error) {
+    console.error('Task refresh failed:', error);
+  }
+}
+
+document.querySelectorAll('#scheduleTabs button').forEach(button => button.addEventListener('click', () => {
+  scheduleMode = button.dataset.mode;
+  document.querySelectorAll('#scheduleTabs button').forEach(item => item.classList.toggle('active', item === button));
+  $('countdownFields').classList.toggle('hidden', scheduleMode !== 'countdown');
+  $('scheduledFields').classList.toggle('hidden', scheduleMode !== 'scheduled');
+}));
+
+document.querySelectorAll('.power-action').forEach(button => button.addEventListener('click', async () => {
+  const action = button.dataset.action;
+  if (!confirm(`Schedule ${formatAction(action)}?`)) return;
+
+  const payload = { action, mode: scheduleMode };
+  if (scheduleMode === 'scheduled') {
+    payload.time = $('scheduledTime').value;
+    if (!payload.time) {
+      toast('Enter an execution time.', 'error');
+      return;
+    }
+  } else {
+    payload.seconds = (Number($('hours').value) || 0) * 3600 + (Number($('minutes').value) || 0) * 60 + (Number($('seconds').value) || 0);
+    if (payload.seconds < 1) {
+      toast('The countdown must be greater than zero.', 'error');
+      return;
+    }
+  }
+
+  try {
+    await apiFetch('/api/power/schedule', { method: 'POST', body: JSON.stringify(payload) });
+    toast('Operation scheduled.', 'success');
+    loadTasks();
+  } catch (error) {
+    toast(error.message, 'error');
+  }
+}));
+
+$('refreshTasks')?.addEventListener('click', loadTasks);
+updateSystem();
+loadTasks();
+setInterval(updateSystem, 1600);
+setInterval(loadTasks, 15000);

@@ -13,6 +13,8 @@ from flask import abort, redirect, request, session, url_for
 
 
 class SlidingWindowLimiter:
+    """Small in-memory request limiter for a single-process deployment."""
+
     def __init__(self) -> None:
         self._events: dict[str, deque[float]] = defaultdict(deque)
         self._lock = threading.Lock()
@@ -39,6 +41,13 @@ class _FailureState:
 
 
 class LoginBruteForceGuard:
+    """Progressive login lockout keyed by both IP and IP+username.
+
+    After `max_failures` failures within the failure window, a lock is applied.
+    Each subsequent lock doubles in duration up to `max_lock_seconds`.
+    A successful login clears the related state.
+    """
+
     def __init__(self) -> None:
         self._states: dict[str, _FailureState] = {}
         self._lock = threading.Lock()
@@ -63,7 +72,15 @@ class LoginBruteForceGuard:
                     longest = max(longest, state.lock_until - now)
         return max(0, int(longest + 0.999))
 
-    def record_failure(self, keys: tuple[str, ...], *, max_failures: int, window_seconds: int, base_lock_seconds: int, max_lock_seconds: int) -> int:
+    def record_failure(
+        self,
+        keys: tuple[str, ...],
+        *,
+        max_failures: int,
+        window_seconds: int,
+        base_lock_seconds: int,
+        max_lock_seconds: int,
+    ) -> int:
         now = time.monotonic()
         longest = 0.0
         with self._lock:
@@ -72,12 +89,17 @@ class LoginBruteForceGuard:
                 self._prune(state, now, window_seconds)
                 state.failures.append(now)
                 state.last_seen = now
+
                 if len(state.failures) >= max_failures:
                     state.lock_level += 1
-                    duration = min(max_lock_seconds, base_lock_seconds * (2 ** max(0, state.lock_level - 1)))
+                    duration = min(
+                        max_lock_seconds,
+                        base_lock_seconds * (2 ** max(0, state.lock_level - 1)),
+                    )
                     state.lock_until = max(state.lock_until, now + duration)
                     state.failures.clear()
                     longest = max(longest, duration)
+
             self._cleanup_locked(now, window_seconds, max_lock_seconds)
         return int(longest)
 
@@ -102,6 +124,11 @@ control_request_limiter = SlidingWindowLimiter()
 
 
 def client_ip() -> str:
+    """Return the direct peer IP.
+
+    Do not trust X-Forwarded-For by default. If this app is later put behind a
+    trusted reverse proxy, configure ProxyFix explicitly at deployment time.
+    """
     return request.remote_addr or "unknown"
 
 

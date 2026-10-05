@@ -9,6 +9,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from typing import Optional
 
+
 ALLOWED_ACTIONS = {"shutdown", "restart", "sleep", "lock"}
 
 
@@ -36,15 +37,19 @@ class PowerScheduler:
     def schedule(self, action: str, *, delay_seconds: Optional[int] = None, at_time: Optional[str] = None) -> ScheduledTask:
         if action not in ALLOWED_ACTIONS:
             raise ValueError("Unsupported action")
+
         execute_at = self._resolve_execute_at(delay_seconds, at_time)
         if execute_at - time.time() > 7 * 24 * 3600:
             raise ValueError("Schedule cannot exceed 7 days")
+
         task = ScheduledTask(str(uuid.uuid4()), action, execute_at, time.time())
         cancel_event = threading.Event()
         with self._lock:
             self._tasks[task.id] = task
             self._events[task.id] = cancel_event
-        threading.Thread(target=self._worker, args=(task.id,), daemon=True, name=f"power-{task.id[:8]}").start()
+
+        thread = threading.Thread(target=self._worker, args=(task.id,), daemon=True, name=f"power-{task.id[:8]}")
+        thread.start()
         return task
 
     def cancel(self, task_id: str) -> bool:

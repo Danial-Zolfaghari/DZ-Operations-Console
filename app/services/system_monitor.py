@@ -24,9 +24,12 @@ class SystemMonitor:
         self._net = NetSample(io.bytes_sent, io.bytes_recv, time.monotonic())
         self._lock = threading.Lock()
         self.started_at = time.time()
+        # Prime psutil CPU counters once so the first API request is meaningful.
         psutil.cpu_percent(interval=None, percpu=True)
 
     def snapshot(self) -> dict:
+        # A short blocking sample gives a real utilization reading instead of the
+        # first-call 0.0 frequently returned by interval=None.
         per_cpu = psutil.cpu_percent(interval=0.18, percpu=True)
         cpu = round(sum(per_cpu) / len(per_cpu), 1) if per_cpu else 0.0
         memory = psutil.virtual_memory()

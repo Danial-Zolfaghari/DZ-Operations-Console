@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+
 from flask import Flask
 
 from config import Config

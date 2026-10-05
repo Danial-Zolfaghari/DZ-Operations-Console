@@ -4,8 +4,15 @@
 {% block content %}
 <section class="page-header screen-page-header">
   <div class="page-heading"><span class="eyebrow">02 / REMOTE DESKTOP</span><h1>Remote Screen</h1><p>Live desktop streaming with explicit mouse and keyboard control.</p></div>
-  <div class="screen-controls"><button class="btn btn-secondary control-toggle" id="toggleMouse" type="button"><span id="mouseLabel">Mouse: Off</span></button><button class="btn btn-secondary control-toggle" id="toggleKeyboard" type="button"><span id="keyboardLabel">Keyboard: Off</span></button><button class="btn btn-primary" id="toggleFullscreen" type="button"><span id="fullscreenLabel">Fullscreen</span></button></div>
+  <div class="screen-controls">
+    <button class="btn btn-secondary control-toggle" id="toggleMouse" type="button"><span class="control-state-dot"></span><span id="mouseLabel">Mouse: Off</span></button>
+    <button class="btn btn-secondary control-toggle" id="toggleKeyboard" type="button"><span class="control-state-dot"></span><span id="keyboardLabel">Keyboard: Off</span></button>
+    <button class="btn btn-primary" id="toggleFullscreen" type="button"><span id="fullscreenLabel">Fullscreen</span></button>
+  </div>
 </section>
-<section class="screen-frame" id="screenStage"><div class="screen-frame-bar"><div><span class="status-dot"></span><strong>LIVE DESKTOP</strong></div><span id="screenStatus">Connecting…</span></div><div class="screen-canvas"><img id="screenImage" src="{{ url_for('main.video_feed') }}" alt="Live desktop stream" draggable="false"><div class="screen-hint" id="screenHint">Mouse and keyboard input remain disabled until you enable them above.</div></div></section>
+<section class="screen-frame" id="screenStage">
+  <div class="screen-frame-bar"><div><span class="status-dot"></span><strong>LIVE DESKTOP</strong></div><span id="screenStatus">Connecting…</span></div>
+  <div class="screen-canvas"><img id="screenImage" src="{{ url_for('main.video_feed') }}" alt="Live desktop stream" draggable="false"><div class="screen-hint" id="screenHint">Mouse and keyboard input remain disabled until you enable them above.</div></div>
+</section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/screen.js') }}"></script>{% endblock %}

@@ -6,21 +6,24 @@
   <div class="page-heading"><span class="eyebrow">04 / CONFIGURATION</span><h1>Security & Access</h1><p>Manage administrator credentials and privileged command execution policy.</p></div>
   {% if restart_pending %}<div class="restart-banner"><span>!</span><div><strong>Restart required</strong><small>Pending changes will apply after the application restarts.</small></div></div>{% endif %}
 </section>
+
 <section class="settings-stack">
   <article class="settings-section panel-flat">
     <div class="settings-section-index">01</div>
     <div class="settings-section-copy"><span class="eyebrow">ACCOUNT SECURITY</span><h2>Change administrator password</h2><p>The new password is stored as a secure hash and becomes active after the next application restart.</p></div>
-    <div class="settings-form"><label><span>Current password</span><input id="currentPassword" type="password" autocomplete="current-password"></label><label><span>New password</span><input id="newPassword" type="password" autocomplete="new-password"></label><label><span>Confirm new password</span><input id="confirmPassword" type="password" autocomplete="new-password"></label></div>
+    <div class="settings-form"><label><span>Current password</span><input id="currentPassword" type="password" autocomplete="current-password" placeholder="Required to save changes"></label><label><span>New password</span><input id="newPassword" type="password" autocomplete="new-password" placeholder="Minimum 8 characters"></label><label><span>Confirm new password</span><input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Repeat new password"></label></div>
   </article>
+
   <article class="settings-section panel-flat">
     <div class="settings-section-index">02</div>
-    <div class="settings-section-copy"><span class="eyebrow">COMMAND EXECUTION</span><h2>Custom PowerShell access</h2><p>Allow custom commands in addition to the curated diagnostic library.</p></div>
+    <div class="settings-section-copy"><span class="eyebrow">COMMAND EXECUTION</span><h2>Custom PowerShell access</h2><p>Allow arbitrary PowerShell commands in addition to the curated diagnostic command library.</p></div>
     <div class="settings-control">
       <div class="toggle-row"><div><strong>Allow custom PowerShell commands</strong><small>Requires an application restart after saving</small></div><label class="switch"><input id="shellEnabled" type="checkbox" {% if persisted_shell %}checked{% endif %}><span></span></label></div>
       <div class="state-table"><div><span>Active now</span><strong class="state-value {{ 'on' if active_shell else 'off' }}">{{ 'Enabled' if active_shell else 'Disabled' }}</strong></div><div><span>After restart</span><strong id="pendingShellState" class="state-value {{ 'on' if persisted_shell else 'off' }}">{{ 'Enabled' if persisted_shell else 'Disabled' }}</strong></div></div>
     </div>
   </article>
 </section>
-<section class="save-bar"><div><span class="eyebrow">APPLY CONFIGURATION</span><strong>Save pending changes</strong></div><button class="btn btn-primary btn-lg" id="saveSettings">Save settings</button></section>
+
+<section class="save-bar"><div><span class="eyebrow">APPLY CONFIGURATION</span><strong>Save pending changes</strong><small>Your current password is required. Restart the application once after saving.</small></div><button class="btn btn-primary btn-lg" id="saveSettings"><span>Save settings</span><span>→</span></button></section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/settings.js') }}"></script>{% endblock %}

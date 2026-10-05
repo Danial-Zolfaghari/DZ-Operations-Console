@@ -15,30 +15,31 @@ if not defined PYTHON_EXE (
   exit /b 1
 )
 
-if not exist ".venvScriptspython.exe" (
+if not exist ".venv\Scripts\python.exe" (
   echo [DZ] Creating virtual environment...
   %PYTHON_EXE% -m venv .venv
   if errorlevel 1 goto :fail
   echo [DZ] Installing dependencies...
-  ".venvScriptspython.exe" -m pip install --upgrade pip
+  ".venv\Scripts\python.exe" -m pip install --upgrade pip
   if errorlevel 1 goto :fail
-  ".venvScriptspython.exe" -m pip install -r requirements.txt
+  ".venv\Scripts\python.exe" -m pip install -r requirements.txt
   if errorlevel 1 goto :fail
 ) else (
-  ".venvScriptspython.exe" -c "import flask,psutil,mss,cv2,numpy,pyautogui" >nul 2>nul
+  ".venv\Scripts\python.exe" -c "import flask,psutil,mss,cv2,numpy,pyautogui" >nul 2>nul
   if errorlevel 1 (
     echo [DZ] Repairing missing dependencies...
-    ".venvScriptspython.exe" -m pip install -r requirements.txt
+    ".venv\Scripts\python.exe" -m pip install -r requirements.txt
     if errorlevel 1 goto :fail
   )
 )
 
+
 echo.
 echo [DZ] Starting DZ Control...
 echo [DZ] Open http://127.0.0.1:5000
-echo [DZ] First-run password is generated securely and printed once by the app
+echo [DZ] Default login: admin / admin123
 echo.
-".venvScriptspython.exe" run.py
+".venv\Scripts\python.exe" run.py
 set "EXIT_CODE=%ERRORLEVEL%"
 echo.
 echo [DZ] Application stopped with exit code %EXIT_CODE%.

@@ -10,28 +10,53 @@
 </head>
 <body class="login-body">
   <main class="login-shell">
-    <section class="login-visual">
+    <section class="login-visual" aria-label="Product information">
       <div class="login-visual-inner">
-        <div class="login-wordmark"><span class="brand-mark brand-mark-xl">DZ</span><span><strong>DZ CONTROL</strong><small>REMOTE OPERATIONS CONSOLE</small></span></div>
+        <div class="login-wordmark">
+          <span class="brand-mark brand-mark-xl">DZ</span>
+          <span><strong>DZ CONTROL</strong><small>REMOTE OPERATIONS CONSOLE</small></span>
+        </div>
+
         <div class="login-statement">
           <span class="eyebrow">SECURE LOCAL ADMINISTRATION</span>
           <h1>One console.<br>Full system control.</h1>
           <p>Monitor system telemetry, operate the remote desktop, run diagnostics and manage privileged actions from a focused administration workspace.</p>
+          <div class="login-feature-list">
+            <div><span>01</span><div><strong>Live telemetry</strong><small>CPU, memory, storage and network activity</small></div></div>
+            <div><span>02</span><div><strong>Remote operations</strong><small>Screen, mouse, keyboard and power controls</small></div></div>
+            <div><span>03</span><div><strong>Protected access</strong><small>CSRF protection, secure sessions and progressive lockout</small></div></div>
+          </div>
+        </div>
+
+        <div class="login-security-strip">
+          <div><span class="status-dot"></span><strong>Local control plane</strong><small>Same-origin session</small></div>
+          <div><strong>HTTPOnly</strong><small>Session cookie protection</small></div>
+          <div><strong>LOCKOUT</strong><small>Brute-force mitigation</small></div>
         </div>
       </div>
     </section>
+
     <section class="login-panel">
+      <div class="login-panel-top"><span class="login-env"><i></i> CONTROL NODE READY</span></div>
       <div class="login-form-wrap">
-        <div class="login-heading"><span class="eyebrow">ADMINISTRATOR ACCESS</span><h2>Welcome back</h2><p>Enter your administrator credentials to continue to DZ Control.</p></div>
+        <div class="login-heading">
+          <span class="eyebrow">ADMINISTRATOR ACCESS</span>
+          <h2>Welcome back</h2>
+          <p>Enter your administrator credentials to continue to DZ Control.</p>
+        </div>
+
         {% if error %}<div class="alert danger" id="loginError"><strong>Access denied</strong><span>{{ error }}</span></div>{% endif %}
+
         <form method="post" class="login-form" autocomplete="on">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
           <label><span>Username</span><input type="text" name="username" required autofocus autocomplete="username" maxlength="128" value="admin" placeholder="admin"></label>
           <label><span>Password</span><input type="password" name="password" required autocomplete="current-password" maxlength="512" placeholder="Enter your password"></label>
-          <button class="btn btn-primary btn-block btn-xl" type="submit"><span>Sign in securely</span><span>→</span></button>
+          <button class="btn btn-primary btn-block btn-xl" type="submit"><span>Sign in securely</span><span aria-hidden="true">→</span></button>
         </form>
+
         <div class="login-footnote"><span class="status-dot"></span><span>Protected by request throttling and progressive account lockout.</span></div>
       </div>
+      <div class="login-panel-bottom"><span>DZ CONTROL</span><span>LOCAL ADMINISTRATION / V6</span></div>
     </section>
   </main>
   <script src="{{ url_for('static', filename='js/core.js') }}"></script>
