@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}DZ Control{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body data-page="{{ page|default('') }}">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-block">
+        <a class="brand" href="{{ url_for('main.dashboard') }}" aria-label="DZ Control dashboard">
+          <span class="brand-mark">DZ</span>
+          <span class="brand-copy"><strong>DZ Control</strong><small>Remote Operations Console</small></span>
+        </a>
+      </div>
+      <nav class="nav" aria-label="Primary navigation">
+        <span class="nav-section">OPERATIONS</span>
+        <a class="nav-link {% if page=='dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}"><span><b>Dashboard</b><small>System overview</small></span></a>
+        <a class="nav-link {% if page=='screen' %}active{% endif %}" href="{{ url_for('main.screen') }}"><span><b>Remote Screen</b><small>Desktop control</small></span></a>
+        <a class="nav-link {% if page=='diagnostics' %}active{% endif %}" href="{{ url_for('main.diagnostics_page') }}"><span><b>Command Center</b><small>Diagnostics & shell</small></span></a>
+        <span class="nav-section nav-section-spaced">SYSTEM</span>
+        <a class="nav-link {% if page=='settings' %}active{% endif %}" href="{{ url_for('main.settings_page') }}"><span><b>Settings</b><small>Security & access</small></span></a>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="security-status"><span class="status-dot"></span><div><strong>Secure session</strong><small>CSRF · Same-origin · Lockout</small></div></div>
+        <form action="{{ url_for('auth.logout') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-secondary btn-block sidebar-signout" type="submit">Sign out</button>
+        </form>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left"><button class="icon-btn sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse navigation">☰</button><div class="breadcrumbs"><span>DZ CONTROL</span><b>/</b><strong>{% block page_title %}Console{% endblock %}</strong></div></div>
+        <div class="topbar-actions"><span class="connection-pill"><span class="status-dot"></span><span>System online</span></span><span class="clock" id="clock">--:--:--</span></div>
+      </header>
+      <div class="workspace">{% block content %}{% endblock %}</div>
+    </main>
+  </div>
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
+  <div class="toast-stack" id="toastStack"></div>
+  <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
