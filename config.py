@@ -13,10 +13,15 @@ DEFAULT_USERNAME = "admin"
 DEFAULT_PASSWORD = None
 
 
-def _default_settings() -> dict:
-    initial_password = os.getenv("DZ_INITIAL_ADMIN_PASSWORD") or secrets.token_urlsafe(18)
-    print("[DZ_Shutdown] First-run admin password:", initial_password)
+def _generate_admin_password() -> str:
+    password = os.getenv("DZ_INITIAL_ADMIN_PASSWORD") or secrets.token_urlsafe(18)
+    print("[DZ_Shutdown] First-run admin password:", password)
     print("[DZ_Shutdown] Change it immediately from Settings or set DZ_ADMIN_PASSWORD_HASH.")
+    return password
+
+
+def _default_settings() -> dict:
+    initial_password = _generate_admin_password()
     return {
         "admin_username": DEFAULT_USERNAME,
         "admin_password_hash": generate_password_hash(initial_password),
@@ -25,26 +30,37 @@ def _default_settings() -> dict:
 
 
 def ensure_settings_file() -> dict:
+    """Load persisted settings without generating throwaway credentials on normal startup."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
     if not SETTINGS_FILE.exists():
         settings = _default_settings()
         SETTINGS_FILE.write_text(json.dumps(settings, indent=2), encoding="utf-8")
         return settings
+
     try:
         settings = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        if not isinstance(settings, dict):
+            raise ValueError("settings root must be an object")
+    except (OSError, json.JSONDecodeError, ValueError):
         settings = _default_settings()
         SETTINGS_FILE.write_text(json.dumps(settings, indent=2), encoding="utf-8")
-    defaults = _default_settings()
+        return settings
+
     changed = False
-    for key, value in defaults.items():
-        if key not in settings:
-            settings[key] = value
-            changed = True
+    if "admin_username" not in settings:
+        settings["admin_username"] = DEFAULT_USERNAME
+        changed = True
+    if "admin_password_hash" not in settings:
+        settings["admin_password_hash"] = generate_password_hash(_generate_admin_password())
+        changed = True
+    if "shell_enabled" not in settings:
+        settings["shell_enabled"] = False
+        changed = True
+
     if changed:
         SETTINGS_FILE.write_text(json.dumps(settings, indent=2), encoding="utf-8")
     return settings
-
 
 def _env(name: str, default: str) -> str:
     """Prefer DZ_* variables while keeping VC_* compatibility for older setups."""
