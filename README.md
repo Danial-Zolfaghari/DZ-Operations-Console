@@ -261,3 +261,10 @@ Use DZ_Shutdown only on Windows systems you own or are explicitly authorized to 
 
 **Danial Zolfaghari**  
 GitHub: [@Danial-Zolfaghari](https://github.com/Danial-Zolfaghari)
+
+---
+
+## Author
+
+**Danial Zolfaghari** — [@Danial-Zolfaghari](https://github.com/Danial-Zolfaghari)
+
