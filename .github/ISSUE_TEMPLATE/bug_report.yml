@@ -1,0 +1,31 @@
+name: Bug report
+description: Report a reproducible problem
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Redact usernames, addresses, credentials, and private system details.
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Security checklist
+      options:
+        - label: I removed credentials and private system information.
+          required: true
+        - label: This report does not publicly disclose an unpatched security vulnerability.
+          required: true
