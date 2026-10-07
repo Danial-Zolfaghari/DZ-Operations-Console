@@ -155,12 +155,15 @@ python run.py
 
 Before Flask starts, DZ_Shutdown checks whether an administrator password already exists.
 
-If no password hash exists in `data/settings.json` and no `DZ_ADMIN_PASSWORD_HASH` is configured, DZ_Shutdown:
+If no administrator username exists, the console first asks you to choose one. There is **no preselected username**.
 
-1. generates a strong random administrator password;
-2. stores **only its Werkzeug hash** in `data/settings.json`;
-3. prints the plaintext password to the console **once**;
-4. starts the web application normally.
+If no password hash exists in `data/settings.json` and no `DZ_ADMIN_PASSWORD_HASH` is configured, DZ_Shutdown then:
+
+1. saves the username you selected;
+2. generates a strong random administrator password;
+3. stores **only its Werkzeug hash** in `data/settings.json`;
+4. prints the chosen username and plaintext password to the console **once**;
+5. starts the web application normally.
 
 Example first-run output:
 
@@ -168,7 +171,7 @@ Example first-run output:
 ====================================================================
  DZ_Shutdown - FIRST RUN ADMIN CREDENTIALS
 ====================================================================
- Username : admin
+ Username : <your-chosen-username>
  Password : <generated-password>
 --------------------------------------------------------------------
  Save this password now. The plaintext password is NOT stored
@@ -183,7 +186,7 @@ On later starts the saved password hash is reused, so a new password is not gene
 Advanced users can still provide a password hash through `.env`:
 
 ```dotenv
-DZ_ADMIN_USERNAME=admin
+DZ_ADMIN_USERNAME=your-managed-username
 DZ_ADMIN_PASSWORD_HASH=your-generated-hash
 ```
 
