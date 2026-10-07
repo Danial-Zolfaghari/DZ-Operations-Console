@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token }}">
   <meta name="color-scheme" content="dark">
-  <title>Sign in | DZ Control</title>
+  <title>Sign in | DZ Operations Console</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body class="login-body">
@@ -14,7 +14,7 @@
       <div class="login-visual-inner">
         <div class="login-wordmark">
           <span class="brand-mark brand-mark-xl">DZ</span>
-          <span><strong>DZ CONTROL</strong><small>REMOTE OPERATIONS CONSOLE</small></span>
+          <span><strong>DZ OPERATIONS CONSOLE</strong><small>WINDOWS OPERATIONS CONSOLE</small></span>
         </div>
 
         <div class="login-statement">
@@ -42,7 +42,7 @@
         <div class="login-heading">
           <span class="eyebrow">ADMINISTRATOR ACCESS</span>
           <h2>Welcome back</h2>
-          <p>Enter your administrator credentials to continue to DZ Control.</p>
+          <p>Enter your administrator credentials to continue to DZ Operations Console.</p>
         </div>
 
         {% if error %}<div class="alert danger" id="loginError"><strong>Access denied</strong><span>{{ error }}</span></div>{% endif %}
@@ -56,7 +56,7 @@
 
         <div class="login-footnote"><span class="status-dot"></span><span>Protected by request throttling and progressive account lockout.</span></div>
       </div>
-      <div class="login-panel-bottom"><span>DZ CONTROL</span><span>LOCAL ADMINISTRATION / V6</span></div>
+      <div class="login-panel-bottom"><span>DZ OPERATIONS CONSOLE</span><span>LOCAL ADMINISTRATION / V6</span></div>
     </section>
   </main>
   <script src="{{ url_for('static', filename='js/core.js') }}"></script>
