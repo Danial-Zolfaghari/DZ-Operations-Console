@@ -49,7 +49,7 @@
 
         <form method="post" class="login-form" autocomplete="on">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <label><span>Username</span><input type="text" name="username" required autofocus autocomplete="username" maxlength="128" value="admin" placeholder="admin"></label>
+          <label><span>Username</span><input type="text" name="username" required autofocus autocomplete="username" maxlength="128" value="{{ submitted_username|default('', true) }}" placeholder="Enter your username"></label>
           <label><span>Password</span><input type="password" name="password" required autocomplete="current-password" maxlength="512" placeholder="Enter your password"></label>
           <button class="btn btn-primary btn-block btn-xl" type="submit"><span>Sign in securely</span><span aria-hidden="true">→</span></button>
         </form>
