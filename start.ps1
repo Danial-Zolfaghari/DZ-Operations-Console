@@ -20,5 +20,5 @@ try {
 
 
 Write-Host '[DZ] Starting DZ Control at http://127.0.0.1:5000'
-Write-Host '[DZ] On first run, an admin password will be generated and printed below.'
+Write-Host '[DZ] On first run, choose an admin username; a password will then be generated and printed below.'
 & .\.venv\Scripts\python.exe run.py
