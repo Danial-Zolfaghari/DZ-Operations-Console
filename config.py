@@ -119,7 +119,7 @@ def _print_first_run_credentials(username: str, password: str) -> None:
     line = "=" * 68
     print()
     print(line)
-    print(" DZ_Shutdown - FIRST RUN ADMIN CREDENTIALS")
+    print(" DZ Operations Console - FIRST RUN ADMIN CREDENTIALS")
     print(line)
     print(f" Username : {username}")
     print(f" Password : {password}")
