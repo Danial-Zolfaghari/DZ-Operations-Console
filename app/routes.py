@@ -40,21 +40,23 @@ def login():
     config = current_app.extensions["dz_config"]
     error = None
     retry_after = 0
+    submitted_username = ""
     if request.method == "POST":
         validate_csrf()
         ip = client_ip()
         username = request.form.get("username", "")[:128].strip()
+        submitted_username = username
         supplied = request.form.get("password", "")[:512]
         normalized_username = username.casefold()
         keys = (f"ip:{ip}", f"account:{ip}:{normalized_username}")
 
         if not login_request_limiter.allow(f"login-request:{ip}", config.login_request_limit, config.login_request_window_seconds):
             retry_after = config.login_request_window_seconds
-            return render_template("login.html", error="Too many sign-in requests. Please wait before trying again.", retry_after=retry_after), 429, {"Retry-After": str(retry_after)}
+            return render_template("login.html", error="Too many sign-in requests. Please wait before trying again.", retry_after=retry_after, submitted_username=submitted_username), 429, {"Retry-After": str(retry_after)}
 
         retry_after = login_bruteforce_guard.retry_after(keys, config.login_failure_window_seconds)
         if retry_after:
-            return render_template("login.html", error=f"Sign-in is temporarily locked. Try again in {retry_after} seconds.", retry_after=retry_after), 429, {"Retry-After": str(retry_after)}
+            return render_template("login.html", error=f"Sign-in is temporarily locked. Try again in {retry_after} seconds.", retry_after=retry_after, submitted_username=submitted_username), 429, {"Retry-After": str(retry_after)}
 
         valid_username = hmac.compare_digest(normalized_username, config.admin_username.casefold())
         valid_password = check_password_hash(config.admin_password_hash, supplied)
@@ -77,7 +79,7 @@ def login():
         )
         error = f"Invalid username or password.{f' Sign-in has been locked for {retry_after} seconds.' if retry_after else ''}"
 
-    return render_template("login.html", error=error, retry_after=retry_after)
+    return render_template("login.html", error=error, retry_after=retry_after, submitted_username=submitted_username)
 
 
 @auth_bp.post("/logout")
