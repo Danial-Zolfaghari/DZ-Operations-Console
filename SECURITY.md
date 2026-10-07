@@ -2,7 +2,7 @@
 
 ## Supported deployment model
 
-DZ_Shutdown is designed to bind to `127.0.0.1` by default. Remote exposure should only be performed through an explicitly secured deployment with authentication, TLS and network access controls.
+DZ Operations Console is designed to bind to `127.0.0.1` by default. Remote exposure should only be performed through an explicitly secured deployment with authentication, TLS and network access controls.
 
 ## Security defaults
 
