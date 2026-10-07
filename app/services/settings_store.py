@@ -19,7 +19,7 @@ class SettingsStore:
     def public(self) -> dict:
         data = self.read()
         return {
-            "admin_username": data.get("admin_username", "admin"),
+            "admin_username": data.get("admin_username", ""),
             "shell_enabled": bool(data.get("shell_enabled", False)),
         }
 
