@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Command Center | DZ Control{% endblock %}
+{% block title %}Command Center | DZ Operations Console{% endblock %}
 {% block page_title %}Command Center{% endblock %}
 {% block content %}
 <section class="page-header command-page-header">
@@ -39,7 +39,7 @@
       <div class="terminal-heading"><strong id="terminalTitle">PowerShell</strong><small>Administrator command session</small></div>
       <button class="terminal-clear" id="clearTerminal">Clear output</button>
     </div>
-    <pre id="terminalOutput">DZ CONTROL / COMMAND CENTER
+    <pre id="terminalOutput">DZ OPERATIONS CONSOLE / COMMAND CENTER
 
 Select a helper command from the library or enter a custom command below.</pre>
     <form class="shell-input-row {% if not catalog.shell_enabled %}shell-disabled{% endif %}" id="shellForm">
