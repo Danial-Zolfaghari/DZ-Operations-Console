@@ -26,5 +26,6 @@ jobs:
       - name: Import smoke test
         shell: pwsh
         env:
+          DZ_ADMIN_USERNAME: ci-admin
           DZ_INITIAL_ADMIN_PASSWORD: ci-bootstrap-password
         run: python -c "from app import create_app; app=create_app(); print(app.url_map)"
