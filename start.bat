@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title DZ Control
+title DZ Operations Console
 
 set "PYTHON_EXE="
 where py >nul 2>nul && set "PYTHON_EXE=py"
@@ -35,7 +35,7 @@ if not exist ".venv\Scripts\python.exe" (
 
 
 echo.
-echo [DZ] Starting DZ Control...
+echo [DZ] Starting DZ Operations Console...
 echo [DZ] Open http://127.0.0.1:5000
 echo [DZ] On first run, choose an admin username; a password will then be generated and printed below.
 echo.
@@ -48,6 +48,6 @@ exit /b %EXIT_CODE%
 
 :fail
 echo.
-echo [ERROR] DZ Control could not start.
+echo [ERROR] DZ Operations Console could not start.
 pause
 exit /b 1
