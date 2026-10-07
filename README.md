@@ -13,8 +13,8 @@
 </p>
 <p align="center">
   <a href="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Danial-Zolfaghari/DZ Operations Console?display_name=tag&sort=semver"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Danial-Zolfaghari/DZ Operations Console"></a>
+  <a href="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Danial-Zolfaghari/DZ-Operations-Console?display_name=tag&sort=semver"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Danial-Zolfaghari/DZ-Operations-Console"></a>
 </p>
 
 
