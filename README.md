@@ -1,4 +1,4 @@
-# DZ_Shutdown
+# DZ Operations Console
 
 <p align="center">
   <strong>Secure local-first Windows control & diagnostics dashboard</strong><br/>
@@ -12,9 +12,9 @@
   <img alt="Security" src="https://img.shields.io/badge/Default%20Bind-127.0.0.1-2EA44F">
 </p>
 <p align="center">
-  <a href="https://github.com/Danial-Zolfaghari/DZ_Shutdown/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Danial-Zolfaghari/DZ_Shutdown/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://github.com/Danial-Zolfaghari/DZ_Shutdown/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Danial-Zolfaghari/DZ_Shutdown?display_name=tag&sort=semver"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Danial-Zolfaghari/DZ_Shutdown"></a>
+  <a href="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/Danial-Zolfaghari/DZ-Operations-Console/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Danial-Zolfaghari/DZ Operations Console?display_name=tag&sort=semver"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Danial-Zolfaghari/DZ Operations Console"></a>
 </p>
 
 
@@ -22,7 +22,7 @@
 
 ## Overview
 
-**DZ_Shutdown** is a Windows administration dashboard designed around a **local-first security model**. It exposes system information and controlled administrative actions through a modern Flask web interface while keeping sensitive capabilities behind authentication, CSRF protection, brute-force protection, and explicit configuration switches.
+**DZ Operations Console** is a Windows administration dashboard designed around a **local-first security model**. It exposes system information and controlled administrative actions through a modern Flask web interface while keeping sensitive capabilities behind authentication, CSRF protection, brute-force protection, and explicit configuration switches.
 
 The current public version is a hardened rewrite of the earlier single-file prototype.
 
@@ -130,8 +130,8 @@ PyAutoGUI>=0.9.54,<1
 ## Installation
 
 ```powershell
-git clone https://github.com/Danial-Zolfaghari/DZ_Shutdown.git
-cd DZ_Shutdown
+git clone https://github.com/Danial-Zolfaghari/DZ-Operations-Console.git
+cd DZ-Operations-Console
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -143,7 +143,7 @@ Copy the environment template:
 Copy-Item .env.example .env
 ```
 
-## First-run administrator password
+## First-run administrator setup
 
 You do **not** need to generate a password hash manually before the first start.
 
@@ -153,11 +153,11 @@ Run the application normally:
 python run.py
 ```
 
-Before Flask starts, DZ_Shutdown checks whether an administrator password already exists.
+Before Flask starts, DZ Operations Console checks whether administrator credentials already exist.
 
 If no administrator username exists, the console first asks you to choose one. There is **no preselected username**.
 
-If no password hash exists in `data/settings.json` and no `DZ_ADMIN_PASSWORD_HASH` is configured, DZ_Shutdown then:
+If no password hash exists in `data/settings.json` and no `DZ_ADMIN_PASSWORD_HASH` is configured, DZ Operations Console then:
 
 1. saves the username you selected;
 2. generates a strong random administrator password;
@@ -169,7 +169,7 @@ Example first-run output:
 
 ```text
 ====================================================================
- DZ_Shutdown - FIRST RUN ADMIN CREDENTIALS
+ DZ Operations Console - FIRST RUN ADMIN CREDENTIALS
 ====================================================================
  Username : <your-chosen-username>
  Password : <generated-password>
@@ -237,7 +237,7 @@ http://127.0.0.1:5000
 | `DZ_HOST` | `127.0.0.1` | Bind address |
 | `DZ_PORT` | `5000` | HTTP port |
 | `DZ_SECRET_KEY` | generated | Flask session signing key |
-| `DZ_ADMIN_USERNAME` | `admin` | Administrator username |
+| `DZ_ADMIN_USERNAME` | first-run prompt | Optional administrator username for managed/non-interactive startup |
 | `DZ_ADMIN_PASSWORD_HASH` | empty | Recommended explicit administrator password hash |
 | `DZ_COOKIE_SECURE` | `0` | Require HTTPS-only cookies when `1` |
 | `DZ_SCREEN_FPS` | `8` | Screen streaming FPS |
@@ -260,7 +260,7 @@ The Settings page can persist the shell option, but applying the change requires
 ## Project structure
 
 ```text
-DZ_Shutdown/
+DZ-Operations-Console/
 ├─ app/
 │  ├─ services/
 │  │  ├─ diagnostics.py
@@ -299,14 +299,7 @@ For anything beyond local machine access:
 
 ## Responsible use
 
-Use DZ_Shutdown only on Windows systems you own or are explicitly authorized to administer.
-
-## Author
-
-**Danial Zolfaghari**  
-GitHub: [@Danial-Zolfaghari](https://github.com/Danial-Zolfaghari)
-
----
+Use DZ Operations Console only on Windows systems you own or are explicitly authorized to administer.
 
 ## Author
 
