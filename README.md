@@ -143,24 +143,59 @@ Copy the environment template:
 Copy-Item .env.example .env
 ```
 
-## Configure the administrator password
+## First-run administrator password
 
-Generate a strong Werkzeug password hash:
+You do **not** need to generate a password hash manually before the first start.
+
+Run the application normally:
+
+```powershell
+python run.py
+```
+
+Before Flask starts, DZ_Shutdown checks whether an administrator password already exists.
+
+If no password hash exists in `data/settings.json` and no `DZ_ADMIN_PASSWORD_HASH` is configured, DZ_Shutdown:
+
+1. generates a strong random administrator password;
+2. stores **only its Werkzeug hash** in `data/settings.json`;
+3. prints the plaintext password to the console **once**;
+4. starts the web application normally.
+
+Example first-run output:
+
+```text
+====================================================================
+ DZ_Shutdown - FIRST RUN ADMIN CREDENTIALS
+====================================================================
+ Username : admin
+ Password : <generated-password>
+--------------------------------------------------------------------
+ Save this password now. The plaintext password is NOT stored
+ and will NOT be printed again after this first bootstrap.
+====================================================================
+```
+
+On later starts the saved password hash is reused, so a new password is not generated or printed.
+
+### Optional manual configuration
+
+Advanced users can still provide a password hash through `.env`:
+
+```dotenv
+DZ_ADMIN_USERNAME=admin
+DZ_ADMIN_PASSWORD_HASH=your-generated-hash
+```
+
+To create a hash manually:
 
 ```powershell
 python make_password.py
 ```
 
-Copy the resulting hash into `.env` (recommended before first run):
+You may also set `DZ_INITIAL_ADMIN_PASSWORD` before the **first** run if you want to choose the bootstrap plaintext password yourself.
 
-```dotenv
-DZ_ADMIN_USERNAME=admin
-DZ_ADMIN_PASSWORD_HASH=your-generated-hash
-# Optional alternative for first-run bootstrap only:
-# DZ_INITIAL_ADMIN_PASSWORD=use-a-strong-temporary-password
-```
-
-Also replace the Flask secret:
+Also replace the Flask secret for persistent deployments:
 
 ```dotenv
 DZ_SECRET_KEY=replace-with-a-long-random-secret
