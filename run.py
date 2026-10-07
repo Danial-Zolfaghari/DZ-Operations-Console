@@ -10,7 +10,7 @@ from config import (
 def _prompt_first_run_username() -> str:
     print()
     print("=" * 68)
-    print(" DZ_Shutdown - FIRST RUN ADMIN SETUP")
+    print(" DZ Operations Console - FIRST RUN ADMIN SETUP")
     print("=" * 68)
     print(" Choose the administrator username for this installation.")
     print(" Allowed: letters, numbers, dot, underscore and hyphen.")
@@ -45,8 +45,8 @@ def main() -> None:
     app = create_app()
     config = app.extensions["dz_config"]
 
-    print(f"[DZ_Shutdown] Starting web UI: http://{config.host}:{config.port}")
-    print(f"[DZ_Shutdown] Admin user: {config.admin_username}")
+    print(f"[DZ Operations Console] Starting web UI: http://{config.host}:{config.port}")
+    print(f"[DZ Operations Console] Admin user: {config.admin_username}")
     app.run(
         host=config.host,
         port=config.port,
