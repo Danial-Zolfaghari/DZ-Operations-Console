@@ -11,6 +11,12 @@
   <img alt="Windows" src="https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows11&logoColor=white">
   <img alt="Security" src="https://img.shields.io/badge/Default%20Bind-127.0.0.1-2EA44F">
 </p>
+<p align="center">
+  <a href="https://github.com/Danial-Zolfaghari/DZ_Shutdown/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Danial-Zolfaghari/DZ_Shutdown/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/Danial-Zolfaghari/DZ_Shutdown/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Danial-Zolfaghari/DZ_Shutdown?display_name=tag&sort=semver"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Danial-Zolfaghari/DZ_Shutdown"></a>
+</p>
+
 
 ---
 
