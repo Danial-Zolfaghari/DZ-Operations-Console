@@ -37,7 +37,7 @@ if not exist ".venv\Scripts\python.exe" (
 echo.
 echo [DZ] Starting DZ Control...
 echo [DZ] Open http://127.0.0.1:5000
-echo [DZ] Default login: admin / admin123
+echo [DZ] On first run, an admin password will be generated and printed below.
 echo.
 ".venv\Scripts\python.exe" run.py
 set "EXIT_CODE=%ERRORLEVEL%"
