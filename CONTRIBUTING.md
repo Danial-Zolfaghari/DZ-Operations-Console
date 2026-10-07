@@ -1,6 +1,6 @@
-# Contributing to DZ_Shutdown
+# Contributing to DZ Operations Console
 
-DZ_Shutdown includes privileged Windows administration features, so changes must preserve secure defaults.
+DZ Operations Console includes privileged Windows administration features, so changes must preserve secure defaults.
 
 ## Rules
 
