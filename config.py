@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import secrets
 from pathlib import Path
 
@@ -11,11 +12,9 @@ from werkzeug.security import generate_password_hash
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 SETTINGS_FILE = DATA_DIR / "settings.json"
-DEFAULT_USERNAME = "admin"
+DEFAULT_USERNAME = None
 DEFAULT_PASSWORD = None
 
-# Make the documented .env file actually effective while still allowing
-# real process environment variables to take precedence.
 load_dotenv(BASE_DIR / ".env", override=False)
 
 
@@ -24,9 +23,31 @@ def _env(name: str, default: str = "") -> str:
     return os.getenv(f"DZ_{name}", os.getenv(f"VC_{name}", default))
 
 
+def _configured_admin_username() -> str | None:
+    value = _env("ADMIN_USERNAME", "").strip()
+    return value or None
+
+
 def _configured_admin_password_hash() -> str | None:
     value = _env("ADMIN_PASSWORD_HASH", "").strip()
     return value or None
+
+
+def validate_admin_username(value: str) -> str:
+    """Validate and normalize a user-selected administrator username."""
+    username = (value or "").strip()
+    if not username:
+        raise ValueError("Administrator username is required.")
+    if len(username) < 3:
+        raise ValueError("Administrator username must be at least 3 characters.")
+    if len(username) > 64:
+        raise ValueError("Administrator username must be at most 64 characters.")
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", username):
+        raise ValueError(
+            "Use letters, numbers, dot, underscore or hyphen; "
+            "the username must start with a letter or number."
+        )
+    return username
 
 
 def _new_admin_password() -> str:
@@ -45,21 +66,35 @@ def _read_settings() -> tuple[dict, bool]:
             raise ValueError("settings root must be an object")
         return data, False
     except (OSError, json.JSONDecodeError, ValueError):
-        # A broken settings file must not leave the application without
-        # usable administrator credentials. Rebuild a safe minimal config.
         return {}, True
 
 
-def _ensure_settings_file() -> tuple[dict, str | None]:
-    """Return persisted settings and a plaintext password only when bootstrapped now."""
+def _ensure_settings_file(
+    bootstrap_username: str | None = None,
+) -> tuple[dict, str | None]:
+    """Return persisted settings and plaintext password only when bootstrapped now."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     settings, must_write = _read_settings()
     changed = must_write
 
-    if not settings.get("admin_username"):
-        settings["admin_username"] = DEFAULT_USERNAME
+    env_username = _configured_admin_username()
+    persisted_username = str(settings.get("admin_username") or "").strip()
+
+    if env_username:
+        username = validate_admin_username(env_username)
+    elif persisted_username:
+        username = validate_admin_username(persisted_username)
+    elif bootstrap_username:
+        username = validate_admin_username(bootstrap_username)
+        settings["admin_username"] = username
         changed = True
+    else:
+        raise RuntimeError(
+            "Administrator username is not configured. "
+            "Run python run.py once to complete first-run setup, "
+            "or set DZ_ADMIN_USERNAME."
+        )
 
     if "shell_enabled" not in settings:
         settings["shell_enabled"] = False
@@ -69,8 +104,6 @@ def _ensure_settings_file() -> tuple[dict, str | None]:
     persisted_hash = str(settings.get("admin_password_hash") or "").strip()
     env_hash = _configured_admin_password_hash()
 
-    # A password supplied as an environment hash wins and does not require
-    # writing another password hash into settings.json.
     if not env_hash and not persisted_hash:
         generated_password = _new_admin_password()
         settings["admin_password_hash"] = generate_password_hash(generated_password)
@@ -98,33 +131,40 @@ def _print_first_run_credentials(username: str, password: str) -> None:
     print()
 
 
-def bootstrap_admin_credentials() -> tuple[str, str] | None:
+def admin_username_is_configured() -> bool:
+    """Return True when an administrator username exists in env or settings."""
+    if _configured_admin_username():
+        return True
+    settings, _ = _read_settings()
+    return bool(str(settings.get("admin_username") or "").strip())
+
+
+def bootstrap_admin_credentials(username: str | None = None) -> tuple[str, str] | None:
     """
     Ensure administrator credentials exist before the web application starts.
 
-    Returns (username, plaintext_password) only when a password was created
-    during this call. Existing settings or DZ_ADMIN_PASSWORD_HASH produce None.
+    The first CLI start supplies a user-selected username. A plaintext password
+    is returned only when a password was generated during this call.
     """
-    settings, generated_password = _ensure_settings_file()
+    settings, generated_password = _ensure_settings_file(bootstrap_username=username)
     if generated_password is None:
         return None
 
-    username = _env("ADMIN_USERNAME", str(settings.get("admin_username") or DEFAULT_USERNAME))
-    return username, generated_password
+    effective_username = _configured_admin_username() or str(settings.get("admin_username") or "")
+    return validate_admin_username(effective_username), generated_password
 
 
 def ensure_settings_file() -> dict:
     """
     Load/create persisted settings.
 
-    create_app() may be used without run.py (for example by a WSGI runner).
-    In that case, still show freshly generated credentials so the user is not
-    locked out. run.py bootstraps first, so normal startup prints only once.
+    Non-interactive starts must already have a username configured in settings
+    or through DZ_ADMIN_USERNAME. Normal first-run setup happens in run.py.
     """
     settings, generated_password = _ensure_settings_file()
     if generated_password is not None:
-        username = _env("ADMIN_USERNAME", str(settings.get("admin_username") or DEFAULT_USERNAME))
-        _print_first_run_credentials(username, generated_password)
+        username = _configured_admin_username() or str(settings.get("admin_username") or "")
+        _print_first_run_credentials(validate_admin_username(username), generated_password)
     return settings
 
 
@@ -136,10 +176,8 @@ class Config:
         self.port = int(_env("PORT", "5000"))
         self.secret_key = _env("SECRET_KEY", secrets.token_hex(32))
 
-        self.admin_username = _env(
-            "ADMIN_USERNAME",
-            str(persisted.get("admin_username") or DEFAULT_USERNAME),
-        )
+        raw_username = _configured_admin_username() or str(persisted.get("admin_username") or "")
+        self.admin_username = validate_admin_username(raw_username)
 
         persisted_hash = str(persisted.get("admin_password_hash") or "")
         self.admin_password_hash = _configured_admin_password_hash() or persisted_hash
