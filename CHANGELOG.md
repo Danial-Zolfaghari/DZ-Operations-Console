@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **DZ_Shutdown** are documented here.
+All notable changes to **DZ Operations Console** are documented here.
 
 ## [Unreleased]
 
@@ -24,5 +24,5 @@ All notable changes to **DZ_Shutdown** are documented here.
 - Initial hardened public release.
 - Authentication, CSRF protection, brute-force protection, localhost binding, and shell-disabled defaults.
 
-[Unreleased]: https://github.com/Danial-Zolfaghari/DZ_Shutdown/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/Danial-Zolfaghari/DZ_Shutdown/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Danial-Zolfaghari/DZ-Operations-Console/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Danial-Zolfaghari/DZ-Operations-Console/releases/tag/v0.1.0
