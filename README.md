@@ -20,6 +20,8 @@
 
 ---
 
+> **Portfolio case study:** [DZ-Operations-Console — engineering overview](https://danial-zolfaghari.github.io/work/dz-operations-console/) · Danial Zolfaghari / دانیال ذوالفقاری
+
 ## Overview
 
 **DZ Operations Console** is a Windows administration dashboard designed around a **local-first security model**. It exposes system information and controlled administrative actions through a modern Flask web interface while keeping sensitive capabilities behind authentication, CSRF protection, brute-force protection, and explicit configuration switches.
